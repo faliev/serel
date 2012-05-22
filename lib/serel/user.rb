@@ -89,9 +89,9 @@ module Serel
       type(:question).url("users/#{id}/questions/unanswered")
     end
 
-    def reputation
-      type(:reputation).url("users/#{id}/reputation")
-    end
+    # def reputation
+    #   type(:reputation).url("users/#{id}/reputation")
+    # end
 
     def suggested_edits
       type(:suggested_edit).url("users/#{id}/suggested-edits")
