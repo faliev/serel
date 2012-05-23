@@ -51,13 +51,13 @@ module Serel
       url("questions/no-answers")
     end
 
-    def answers
-      type(:answer).url("questions/#{@id}/answers")
-    end
-
-    def comments
-      type(:comment).url("questions/#{@id}/comments")
-    end
+    # def answers
+    #   type(:answer).url("questions/#{@id}/answers")
+    # end
+    # 
+    # def comments
+    #   type(:comment).url("questions/#{@id}/comments")
+    # end
 
     def linked
       type(:question).url("questions/#{@id}/linked")
