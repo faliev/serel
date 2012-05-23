@@ -5,12 +5,26 @@ module Serel
 
     def initialize(data)
       @data = {}
-      attributes.each { |k,v| @data[k] = data[k.to_s] }
+      
+      attributes.each do |k,v| 
+        
+        if data.kind_of?(Hash)
+          @data[k] = data[k.to_s]
+        else
+          @data[k] = data
+        end
+        
+      end
+        
       if associations
-        associations.each do |k,v|
-          if data[k.to_s]
-            @data[k] = find_constant(v).new(data[k.to_s])
-          end
+        associations.each do |k,v|              
+          if data.kind_of?(Hash)
+            if data[k.to_s]
+              @data[k] = find_constant(v).new(data[k.to_s])
+            end
+          else
+            @data[k] = find_constant(v).new(data)
+          end  
         end
       end
     end
@@ -188,10 +202,13 @@ module Serel
     # Returns a formatted attribute. Used interally to cast attributes into their appropriate types.
     # Currently only handles DateTime attributes, since Ruby automatically handles all other known
     # types for us.
-    def format_attribute(attribute)
+    def format_attribute(attribute) 
+      puts "attribute: #{attribute}"
       # Handle nil values
       if @data[attribute] == nil
-        nil
+        nil                       
+      elsif @data[attribute].kind_of?(Array)
+        return @data[attribute]
       else
         # Use class names as types otherwise case will look at the type of the
         # arg, which would otherwise always be Class.
