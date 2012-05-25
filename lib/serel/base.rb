@@ -6,35 +6,31 @@ module Serel
     def initialize(data)
       @data = {}
       
-      attributes.each do |k,v| 
-        
-        if data.kind_of?(Hash)
-          @data[k] = data[k.to_s]
-        else
-          @data[k] = data
-        end
-        
-      end
-        
+      attributes.each { |k,v| @data[k] = data[k.to_s] }        
+      
       if associations
-        associations.each do |k,v|              
-          if data.kind_of?(Hash)
-            if data[k.to_s]
+        associations.each do |k,v|
+          if data[k.to_s]
+            if data[k.to_s].kind_of?(Array)
+              data[k.to_s].each do |d|
+                @data[k] = [] unless @data.include?(k)
+                @data[k] << find_constant(v).new(d)
+              end  
+            else
               @data[k] = find_constant(v).new(data[k.to_s])
             end
-          else
-            @data[k] = find_constant(v).new(data)
           end  
         end
       end
+      
     end
-
+    
     # Internal: Provides access to the internal data
     # Rather than store data using attr_writers (problems) we use a hash.
     def [](attr)
       format_attribute(attr)
     end
-
+    
     def []=(attr, value)
       @data[attr] = value
     end
@@ -203,7 +199,6 @@ module Serel
     # Currently only handles DateTime attributes, since Ruby automatically handles all other known
     # types for us.
     def format_attribute(attribute) 
-      puts "attribute: #{attribute}"
       # Handle nil values
       if @data[attribute] == nil
         nil                       
